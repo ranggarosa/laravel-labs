@@ -1,0 +1,56 @@
+{
+  "name": "Laravel and NodeJS Spec-Kit Lab",
+  // Cukup ubah 8.3 menjadi 8.4 jika ingin beralih ke PHP 8.4
+  "image": "mcr.microsoft.com/devcontainers/php:1-8.3-bookworm",
+  
+  "features": {
+    // Otomatis menginstal Node.js LTS (v22) sekaligus NVM (Node Version Manager)
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22",
+      "nvmVersion": "latest"
+    },
+    // Diperlukan oleh GitHub Spec Kit (specify-cli) yang berbasis Python/uv
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12",
+      "installTools": true
+    }
+  },
+
+  "forwardPorts": [8000, 5173, 3000, 4200],
+  "portsAttributes": {
+    "8000": { "label": "Laravel", "onAutoForward": "notify" },
+    "5173": { "label": "Vite", "onAutoForward": "silent" },
+    "3000": { "label": "Next.js", "onAutoForward": "notify" },
+    "4200": { "label": "Angular CLI", "onAutoForward": "notify" }
+  },
+
+  "containerEnv": {
+    "COMPOSER_HOME": "/home/vscode/.config/composer"
+  },
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/.config/composer/vendor/bin:/home/vscode/.local/bin"
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      // Ekstensi ini hanya berjalan di dalam Cloud Codespace, bukan membebani PC lokal
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "Vue.volar",
+        "svelte.svelte-vscode"
+      ]
+    }
+  },
+
+  // Menginstal SQLite, Laravel Installer, pnpm, uv, dan GitHub Spec Kit otomatis saat container dibuat
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y sqlite3 libsqlite3-dev && composer global require laravel/installer && npm install -g pnpm && curl -LsSf https://astral.sh/uv/install.sh | sh && ~/.local/bin/uv tool install specify-cli --from git+https://github.com/github/spec-kit.git",
+  
+  "remoteUser": "vscode"
+}
